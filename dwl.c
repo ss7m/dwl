@@ -176,7 +176,6 @@ struct Monitor {
 	double mfact;
 	int nmaster;
 	Client *fullscreenclient;
-	int position;
 };
 
 typedef struct {
@@ -816,8 +815,6 @@ createmon(struct wl_listener *listener, void *data)
 	struct wlr_output *wlr_output = data;
 	Monitor *m;
 	const MonitorRule *r;
-	Monitor *moni, *insertmon = NULL;
-	int x = 0;
 
 	/* The mode is a tuple of (width, height, refresh rate), and each
 	 * monitor supports only a specific set of modes. We just pick the
@@ -831,7 +828,6 @@ createmon(struct wl_listener *listener, void *data)
 	for (size_t i = 0; i < LENGTH(m->layers); ++i)
 		wl_list_init(&m->layers[i]);
 	m->tagset[0] = m->tagset[1] = 1;
-	m->position = -1;
 	for (r = monrules; r < END(monrules); r++) {
 		if (!r->name || strstr(wlr_output->name, r->name)) {
 			m->mfact = r->mfact;
@@ -841,7 +837,6 @@ createmon(struct wl_listener *listener, void *data)
 			m->lt[0] = r->lt;
 			m->lt[1] = &layouts[LENGTH(layouts) > 1 && r->lt != &layouts[1]];
 			wlr_output_set_transform(wlr_output, r->rr);
-			m->position = r - monrules;
 			break;
 		}
 	}
@@ -850,15 +845,7 @@ createmon(struct wl_listener *listener, void *data)
 	LISTEN(&wlr_output->events.frame, &m->frame, rendermon);
 	LISTEN(&wlr_output->events.destroy, &m->destroy, cleanupmon);
 
-	wl_list_for_each(moni, &mons, link)
-		if (m->position > moni->position)
-			insertmon = moni;
-	if (insertmon) {
-		x = insertmon->w.x + insertmon->w.width;
-		wl_list_insert(&insertmon->link, &m->link);
-	} else {
-		wl_list_insert(&mons, &m->link);
-	}
+	wl_list_insert(&mons, &m->link);
 
 	wlr_output_enable(wlr_output, 1);
 	if (!wlr_output_commit(wlr_output))
@@ -870,13 +857,7 @@ createmon(struct wl_listener *listener, void *data)
 	 * display, which Wayland clients can see to find out information about the
 	 * output (such as DPI, scale factor, manufacturer, etc).
 	 */
-	wlr_output_layout_add(output_layout, wlr_output, x, 0);
-	wl_list_for_each_reverse(moni, &mons, link) {
-		/* All monitors to the right of the new one must be moved */
-		if (moni == m)
-			break;
-		wlr_output_layout_move(output_layout, moni->wlr_output, moni->w.x + m->wlr_output->width, 0);
-	}
+	wlr_output_layout_add_auto(output_layout, wlr_output);
 	sgeom = *wlr_output_layout_get_box(output_layout, NULL);
 
 	/* When adding monitors, the geometries of all monitors must be updated */
