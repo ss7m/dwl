@@ -1301,9 +1301,9 @@ mapnotify(struct wl_listener *listener, void *data)
 
         /* Insert this client into client lists. */
         if (oldfocus) {
-                wl_list_insert(&oldfocus->link, &c->link);
-                wl_list_insert(&oldfocus->flink, &c->flink);
-                wl_list_insert(&oldfocus->slink, &c->slink);
+                wl_list_insert(oldfocus->link.prev, &c->link);
+                wl_list_insert(oldfocus->flink.prev, &c->flink);
+                wl_list_insert(oldfocus->slink.prev, &c->slink);
         } else {
                 wl_list_insert(&clients, &c->link);
                 wl_list_insert(&fstack, &c->flink);
