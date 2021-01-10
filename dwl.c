@@ -168,9 +168,8 @@ struct Monitor {
 	struct wlr_box m;      /* monitor area, layout-relative */
 	struct wlr_box w;      /* window area, layout-relative */
 	struct wl_list layers[4]; // LayerSurface::link
-	const Layout *lt[2];
 	unsigned int seltags;
-	unsigned int sellt;
+	unsigned int sellt; /* selected layout */
 	unsigned int tagset[2];
 	double mfact;
 	int nmaster;
@@ -182,7 +181,6 @@ typedef struct {
 	float mfact;
 	int nmaster;
 	float scale;
-	const Layout *lt;
 	enum wl_output_transform rr;
 	int x;
 	int y;
@@ -271,7 +269,7 @@ static void setcursor(struct wl_listener *listener, void *data);
 static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
 static void setfloating(Client *c, int floating);
-static void setlayout(const Arg *arg);
+static void cyclelayout(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setmon(Client *c, Monitor *m, unsigned int newtags);
 static void setup(void);
@@ -475,8 +473,8 @@ applyrules(Client *c)
 void
 arrange(Monitor *m)
 {
-	if (m->lt[m->sellt]->arrange)
-		m->lt[m->sellt]->arrange(m);
+	if (layouts[m->sellt].arrange)
+		layouts[m->sellt].arrange(m);
 	/* TODO recheck pointer focus here... or in resize()? */
 }
 
@@ -830,7 +828,6 @@ createmon(struct wl_listener *listener, void *data)
 			m->nmaster = r->nmaster;
 			wlr_output_set_scale(wlr_output, r->scale);
 			wlr_xcursor_manager_load(cursor_mgr, r->scale);
-			m->lt[0] = m->lt[1] = r->lt;
 			wlr_output_set_transform(wlr_output, r->rr);
 			m->position = r - monrules;
 			break;
@@ -1894,13 +1891,9 @@ setfloating(Client *c, int floating)
 }
 
 void
-setlayout(const Arg *arg)
-{
-	if (!arg || !arg->v || arg->v != selmon->lt[selmon->sellt])
-		selmon->sellt ^= 1;
-	if (arg && arg->v)
-		selmon->lt[selmon->sellt] = (Layout *)arg->v;
-	/* TODO change layout symbol? */
+cyclelayout(const Arg *arg) {
+	(void)arg;
+	selmon->sellt = (selmon->sellt + 1) % LENGTH(layouts);
 	arrange(selmon);
 }
 
@@ -1910,7 +1903,7 @@ setmfact(const Arg *arg)
 {
 	float f;
 
-	if (!arg || !selmon->lt[selmon->sellt]->arrange)
+	if (!arg)
 		return;
 	f = arg->f < 1.0 ? arg->f + selmon->mfact : arg->f - 1.0;
 	if (f < 0.1 || f > 0.9)
@@ -2355,7 +2348,7 @@ zoom(const Arg *arg)
 {
 	Client *c, *sel = selclient();
 
-	if (!sel || !selmon->lt[selmon->sellt]->arrange || sel->isfloating)
+	if (!sel || sel->isfloating)
 		return;
 
 	/* Search for the first tiled window that is not sel, marking sel as

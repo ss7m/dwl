@@ -1,7 +1,7 @@
 /*
  * TODO list
  * mod+space to move through layouts
- * mod+shift+j/k to move windows
+ * status bar?
  */
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
@@ -32,7 +32,7 @@ static const Layout layouts[] = {
  * The order in which monitors are defined determines their position.
  * Non-configured monitors are always added to the left. */
 static const MonitorRule monrules[] = {
-	/* name       mfact nmaster scale layout       rotate/reflect x y */
+	/* name       mfact nmaster scale rotate/reflect x y */
 	/* example of a HiDPI laptop monitor:
 	{ "eDP-1",    0.5,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
 	*/
@@ -40,7 +40,7 @@ static const MonitorRule monrules[] = {
 	 * focusmon and tagmon cycle trough the monitors */
 	/* defaults */
     // { "eDP-1",    0.5,  1,      3.5,  &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
-	{ NULL,       0.55, 1,      3.5,  &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
+	{ NULL,       0.55, 1,      3.5,  WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
 };
 
 /* keyboard */
@@ -84,12 +84,10 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
+    { MODKEY,                    XKB_KEY_space,      cyclelayout,    {0} },
 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
 	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
-	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
 	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
