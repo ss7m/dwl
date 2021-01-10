@@ -1,6 +1,5 @@
 /*
  * TODO list
- * mod+space to move through layouts
  * status bar?
  */
 /* appearance */

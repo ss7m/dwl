@@ -56,6 +56,14 @@ Note: Wayland requires a valid `XDG_RUNTIME_DIR`, which is usually set up by a s
     export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$(id -u)
     mkdir -p $XDG_RUNTIME_DIR
 
+## Changes in this Fork
+* Make layouts work like xmonad
+    - mod+space to cycle through layouts
+    - every monitor has the same list of layouts
+* Implement mod+J/K to move a window through the stack
+* New windows are placed before the current window, like in xmonad
+* Removed fullscreen support
+
 ## Replacements for X applications
 
 You can find a [list of Wayland applications on the sway wiki](https://github.com/swaywm/sway/wiki/i3-Migration-Guide).
