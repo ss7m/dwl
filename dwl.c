@@ -1,5 +1,6 @@
 /*
  * See LICENSE file for copyright and license details.
+ * vim: set noexpandtab:
  */
 #define _POSIX_C_SOURCE 200809L
 #include <getopt.h>
@@ -1299,16 +1300,16 @@ mapnotify(struct wl_listener *listener, void *data)
 		return;
 	}
 
-        /* Insert this client into client lists. */
-        if (oldfocus) {
-                wl_list_insert(oldfocus->link.prev, &c->link);
-                wl_list_insert(oldfocus->flink.prev, &c->flink);
-                wl_list_insert(oldfocus->slink.prev, &c->slink);
-        } else {
-                wl_list_insert(&clients, &c->link);
-                wl_list_insert(&fstack, &c->flink);
-                wl_list_insert(&stack, &c->slink);
-        }
+	/* Insert this client into client lists. */
+	if (oldfocus) {
+		wl_list_insert(oldfocus->link.prev, &c->link);
+		wl_list_insert(oldfocus->flink.prev, &c->flink);
+		wl_list_insert(oldfocus->slink.prev, &c->slink);
+	} else {
+		wl_list_insert(&clients, &c->link);
+		wl_list_insert(&fstack, &c->flink);
+		wl_list_insert(&stack, &c->slink);
+	}
 
 	client_get_geometry(c, &c->geom);
 	c->geom.width += 2 * c->bw;
@@ -2354,11 +2355,11 @@ zoom(const Arg *arg)
 void
 activatex11(struct wl_listener *listener, void *data)
 {
-       Client *c = wl_container_of(listener, c, activate);
+	Client *c = wl_container_of(listener, c, activate);
 
-       /* Only "managed" windows can be activated */
-       if (c->type == X11Managed)
-               wlr_xwayland_surface_activate(c->surface.xwayland, 1);
+	/* Only "managed" windows can be activated */
+	if (c->type == X11Managed)
+		wlr_xwayland_surface_activate(c->surface.xwayland, 1);
 }
 
 void
