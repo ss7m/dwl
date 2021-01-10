@@ -237,6 +237,7 @@ static Monitor *dirtomon(int dir);
 static void focusclient(Client *c, int lift);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
+static void movestack(const Arg *arg);
 static Client *focustop(Monitor *m);
 static void getxdecomode(struct wl_listener *listener, void *data);
 static void incnmaster(const Arg *arg);
@@ -1143,6 +1144,36 @@ focusstack(const Arg *arg)
 	}
 	/* If only one client is visible on selmon, then c == sel */
 	focusclient(c, 1);
+}
+
+void
+movestack(const Arg *arg)
+{
+	Client *c, *sel = selclient();
+
+	if (wl_list_length(&clients) <= 1) {
+		return;
+	}
+
+	if (arg->i > 0) {
+		wl_list_for_each(c, &sel->link, link) {
+			if (VISIBLEON(c, selmon) || &c->link == &clients) {
+				break; /* found it */
+			}
+		}
+	} else {
+		wl_list_for_each_reverse(c, &sel->link, link) {
+			if (VISIBLEON(c, selmon) || &c->link == &clients) {
+				break; /* found it */
+			}
+		}
+		/* backup one client */
+		c = wl_container_of(c->link.prev, c, link);
+	}
+
+	wl_list_remove(&sel->link);
+	wl_list_insert(&c->link, &sel->link);
+	arrange(selmon);
 }
 
 Client *
