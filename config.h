@@ -1,4 +1,5 @@
 /*
+ * vim: set noexpandtab:
  * TODO list
  * status bar?
  * Get rid of firefox decorations
@@ -43,7 +44,6 @@ static const MonitorRule monrules[] = {
 	/* the order in which monitors are defined here affects the order in which
 	 * focusmon and tagmon cycle trough the monitors */
 	/* defaults */
-    // { "eDP-1",    0.5,  1,      3.5,  &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
 	{ NULL,       0.55, 1,      3.5,  WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
 };
 
@@ -77,28 +77,27 @@ static const int natural_scrolling = 1;
 static const char *termcmd[] = { "alacritty", NULL };
 static const char *firecmd[] = { "firefox", NULL };
 static const char *vifmcmd[] = {
-    "alacritty", "--command", "vifm", HOME_DIR, HOME_DIR "/Documents", NULL
+	"alacritty", "--command", "vifm", HOME_DIR, HOME_DIR "/Documents", NULL
 };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
 	/* modifier                  key                 function        argument */
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
-    { MODKEY,                    XKB_KEY_f,          spawn,          {.v = firecmd} },
-    { MODKEY,                    XKB_KEY_v,          spawn,          {.v = vifmcmd } },
+	{ MODKEY,                    XKB_KEY_f,          spawn,          {.v = firecmd} },
+	{ MODKEY,                    XKB_KEY_v,          spawn,          {.v = vifmcmd } },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
-    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
-    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
 	{ MODKEY,                    XKB_KEY_comma,      incnmaster,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_period,     incnmaster,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
-    { MODKEY,                    XKB_KEY_space,      cyclelayout,    {0} },
+	{ MODKEY,                    XKB_KEY_space,      cyclelayout,    {0} },
 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
 	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
 	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),
@@ -119,7 +118,7 @@ static const Key keys[] = {
 };
 
 static const Button buttons[] = {
-	{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
-	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
-	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
+	//{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
+	//{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
+	//{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
