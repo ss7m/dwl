@@ -76,13 +76,6 @@ typedef union {
 	const void *v;
 } Arg;
 
-typedef struct {
-	unsigned int mod;
-	unsigned int button;
-	void (*func)(const Arg *);
-	const Arg arg;
-} Button;
-
 typedef struct Monitor Monitor;
 typedef struct {
 	struct wl_list link;
@@ -636,17 +629,6 @@ buttonpress(struct wl_listener *listener, void *data)
 			focusclient(c, 1);
 		break;
 	case WLR_BUTTON_RELEASED:
-		/* If you released any buttons, we exit interactive move/resize mode. */
-		/* TODO should reset to the pointer focus's current setcursor */
-		if (cursor_mode != CurNormal) {
-			wlr_xcursor_manager_set_cursor_image(cursor_mgr,
-					"left_ptr", cursor);
-			cursor_mode = CurNormal;
-			/* Drop the window off on its new monitor */
-			selmon = xytomon(cursor->x, cursor->y);
-			setmon(grabc, selmon, 0);
-			return;
-		}
 		break;
 	}
 	/* If the event wasn't handled by the compositor, notify the client with
