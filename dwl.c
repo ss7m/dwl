@@ -250,7 +250,6 @@ static void monocle(Monitor *m);
 static void motionabsolute(struct wl_listener *listener, void *data);
 static void motionnotify(uint32_t time);
 static void motionrelative(struct wl_listener *listener, void *data);
-static void moveresize(const Arg *arg);
 static void outputmgrapply(struct wl_listener *listener, void *data);
 static void outputmgrapplyortest(struct wlr_output_configuration_v1 *config, int test);
 static void outputmgrtest(struct wl_listener *listener, void *data);
@@ -268,7 +267,6 @@ static Client *selclient(void);
 static void setcursor(struct wl_listener *listener, void *data);
 static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
-static void setfloating(Client *c, int floating);
 static void cyclelayout(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setmon(Client *c, Monitor *m, unsigned int newtags);
@@ -279,7 +277,6 @@ static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void mirrortile(Monitor *m);
-static void togglefloating(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unmaplayersurface(LayerSurface *layersurface);
@@ -314,8 +311,10 @@ static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
 
 static struct wlr_cursor *cursor;
 static struct wlr_xcursor_manager *cursor_mgr;
+#ifdef XWAYLAND
 static struct wlr_xcursor *xcursor;
 static struct wlr_xcursor_manager *xcursor_mgr;
+#endif
 
 static struct wlr_seat *seat;
 static struct wl_list keyboards;
@@ -626,10 +625,7 @@ void
 buttonpress(struct wl_listener *listener, void *data)
 {
 	struct wlr_event_pointer_button *event = data;
-	struct wlr_keyboard *keyboard;
-	uint32_t mods;
 	Client *c;
-	const Button *b;
 
 	wlr_idle_notify_activity(idle, seat);
 
@@ -638,16 +634,6 @@ buttonpress(struct wl_listener *listener, void *data)
 		/* Change focus if the button was _pressed_ over a client */
 		if ((c = xytoclient(cursor->x, cursor->y)))
 			focusclient(c, 1);
-
-		keyboard = wlr_seat_get_keyboard(seat);
-		mods = wlr_keyboard_get_modifiers(keyboard);
-		for (b = buttons; b < END(buttons); b++) {
-			if (CLEANMASK(mods) == CLEANMASK(b->mod) &&
-					event->button == b->button && b->func) {
-				b->func(&b->arg);
-				return;
-			}
-		}
 		break;
 	case WLR_BUTTON_RELEASED:
 		/* If you released any buttons, we exit interactive move/resize mode. */
@@ -1458,33 +1444,6 @@ motionrelative(struct wl_listener *listener, void *data)
 }
 
 void
-moveresize(const Arg *arg)
-{
-	grabc = xytoclient(cursor->x, cursor->y);
-	if (!grabc)
-		return;
-
-	/* Float the window and tell motionnotify to grab it */
-	setfloating(grabc, 1);
-	switch (cursor_mode = arg->ui) {
-	case CurMove:
-		grabcx = cursor->x - grabc->geom.x;
-		grabcy = cursor->y - grabc->geom.y;
-		wlr_xcursor_manager_set_cursor_image(cursor_mgr, "fleur", cursor);
-		break;
-	case CurResize:
-		/* Doesn't work for X11 output - the next absolute motion event
-		 * returns the cursor to where it started */
-		wlr_cursor_warp_closest(cursor, NULL,
-				grabc->geom.x + grabc->geom.width,
-				grabc->geom.y + grabc->geom.height);
-		wlr_xcursor_manager_set_cursor_image(cursor_mgr,
-				"bottom_right_corner", cursor);
-		break;
-	}
-}
-
-void
 outputmgrapply(struct wl_listener *listener, void *data)
 {
 	struct wlr_output_configuration_v1 *config = data;
@@ -1885,13 +1844,6 @@ setcursor(struct wl_listener *listener, void *data)
 }
 
 void
-setfloating(Client *c, int floating)
-{
-	c->isfloating = floating;
-	arrange(c->mon);
-}
-
-void
 cyclelayout(const Arg *arg) {
 	(void)arg;
 	selmon->sellt = (selmon->sellt + 1) % LENGTH(layouts);
@@ -2227,16 +2179,6 @@ mirrortile(Monitor *m)
 		}
 		i++;
 	}
-}
-
-void
-togglefloating(const Arg *arg)
-{
-	Client *sel = selclient();
-	if (!sel)
-		return;
-	/* return if fullscreen */
-	setfloating(sel, !sel->isfloating /* || sel->isfixed */);
 }
 
 void

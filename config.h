@@ -3,6 +3,7 @@
  * TODO list
  * status bar?
  * Get rid of firefox decorations
+ * figure out what tagmon is
  */
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
@@ -116,10 +117,4 @@ static const Key keys[] = {
 	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
 	CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
 #undef CHVT
-};
-
-static const Button buttons[] = {
-	//{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
-	//{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
-	//{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };
