@@ -1,13 +1,18 @@
 /*
  * TODO list
  * status bar?
+ * Get rid of firefox decorations
  */
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
 static const unsigned int borderpx  = 2;  /* border pixel of windows */
-static const float rootcolor[]      = {0.3, 0.3, 0.3, 1.0};
-static const float bordercolor[]    = {0.5, 0.5, 0.5, 1.0};
-static const float focuscolor[]     = {1.0, 0.0, 0.0, 1.0};
+#define FF ((float) 0xFF)
+#define HC(r,g,b) { 0x ## r / FF, 0x ## g / FF, 0x ## b / FF, 1.0}
+static const float rootcolor[]      = HC(77, 77, 77);
+static const float bordercolor[]    = HC(16, 18, 21);
+static const float focuscolor[]     = HC(6B, 70, 89);
+#undef HC
+#undef FF
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -79,8 +84,8 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
     { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
     { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
-	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+	{ MODKEY,                    XKB_KEY_comma,      incnmaster,     {.i = +1} },
+	{ MODKEY,                    XKB_KEY_period,     incnmaster,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
     { MODKEY,                    XKB_KEY_space,      cyclelayout,    {0} },
@@ -90,10 +95,6 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
 	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
-	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = -1} },
-	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = +1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = -1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = +1} },
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),
 	TAGKEYS(          XKB_KEY_2, XKB_KEY_at,                         1),
 	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                 2),
@@ -108,6 +109,7 @@ static const Key keys[] = {
 #define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
 	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
 	CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
+#undef CHVT
 };
 
 static const Button buttons[] = {
