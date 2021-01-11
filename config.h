@@ -74,12 +74,18 @@ static const int natural_scrolling = 1;
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *termcmd[]  = { "alacritty", NULL };
+static const char *termcmd[] = { "alacritty", NULL };
+static const char *firecmd[] = { "firefox", NULL };
+static const char *vifmcmd[] = {
+    "alacritty", "--command", "vifm", HOME_DIR, HOME_DIR "/Documents", NULL
+};
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
 	/* modifier                  key                 function        argument */
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
+    { MODKEY,                    XKB_KEY_f,          spawn,          {.v = firecmd} },
+    { MODKEY,                    XKB_KEY_v,          spawn,          {.v = vifmcmd } },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
     { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
