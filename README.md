@@ -62,7 +62,10 @@ Note: Wayland requires a valid `XDG_RUNTIME_DIR`, which is usually set up by a s
     - every monitor has the same list of layouts
 * Implement mod+J/K to move a window through the stack
 * New windows are placed before the current window, like in xmonad
-* Removed fullscreen support
+* Added equivalent of xmonad's Mirror Tall
+* Removed features:
+    - fullscreen support
+    - mouse controls, control over floating windows
 
 ## Replacements for X applications
 
