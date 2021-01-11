@@ -30,6 +30,7 @@ static const Rule rules[] = {
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },
+	{ "=[]",      mirrortile },
 	{ "[M]",      monocle },
 };
 

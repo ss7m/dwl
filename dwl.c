@@ -278,6 +278,7 @@ static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
+static void mirrortile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
@@ -2183,6 +2184,46 @@ tile(Monitor *m)
 			h = (m->w.height - ty) / (n - i);
 			resize(c, m->w.x + mw, m->w.y + ty, m->w.width - mw, h, 0);
 			ty += c->geom.height;
+		}
+		i++;
+	}
+}
+
+void
+mirrortile(Monitor *m)
+{
+	unsigned int i, n = 0, w, mh, mx, tx;
+	Client *c;
+
+	wl_list_for_each(c, &clients, link) {
+		if (VISIBLEON(c, m) && !c->isfloating) {
+			n++;
+		}
+	}
+
+	if (n == 0) {
+		return;
+	}
+
+	/* determine master width */
+	if (n > m->nmaster) {
+		mh = m->nmaster ? m->w.height * m->mfact : 0;
+	} else {
+		mh = m->w.height;
+	}
+
+	i = mx = tx = 0;
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating) {
+			continue;
+		} else if (i < m->nmaster) {
+			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
+			resize(c, m->w.x + mx, m->w.y, w, mh, 0);
+			mx += c->geom.width;
+		} else {
+			w = (m->w.width - tx) / (n - i);
+			resize(c, m->w.x + tx, m->w.y + mh, w, m->w.height - mh, 0);
+			tx += c->geom.width;
 		}
 		i++;
 	}
