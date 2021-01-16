@@ -1359,16 +1359,16 @@ mapnotify(struct wl_listener *listener, void *data)
 		return;
 	}
 
-        /* Insert this client into client lists. */
-        if (oldfocus) {
-                wl_list_insert(oldfocus->link.prev, &c->link);
-                wl_list_insert(oldfocus->flink.prev, &c->flink);
-                wl_list_insert(oldfocus->slink.prev, &c->slink);
-        } else {
-                wl_list_insert(&clients, &c->link);
-                wl_list_insert(&fstack, &c->flink);
-                wl_list_insert(&stack, &c->slink);
-        }
+	/* Insert this client into client lists. */
+	if (oldfocus) {
+		wl_list_insert(oldfocus->link.prev, &c->link);
+		wl_list_insert(oldfocus->flink.prev, &c->flink);
+		wl_list_insert(oldfocus->slink.prev, &c->slink);
+	} else {
+		wl_list_insert(&clients, &c->link);
+		wl_list_insert(&fstack, &c->flink);
+		wl_list_insert(&stack, &c->slink);
+	}
 
 	client_get_geometry(c, &c->geom);
 	c->geom.width += 2 * c->bw;
