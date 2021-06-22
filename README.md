@@ -11,33 +11,34 @@ dwl is a compact, hackable compositor for Wayland based on [wlroots](https://git
 
 dwl is not meant to provide every feature under the sun. Instead, like dwm, it sticks to features which are necessary, simple, and straightforward to implement given the base on which it is built. Implemented default features are:
 
-- Any features provided by dwm/Xlib: simple window borders, tags, keybindings, client rules, mouse move/resize. The built-in status bar is an exception to avoid taking a dependency on FreeType or Pango and increasing the SLOC
+- Any features provided by dwm/Xlib: simple window borders, tags, keybindings, client rules, mouse move/resize. Providing a built-in status bar is an exception to this goal, to avoid dependencies on font rendering and/or drawing libraries when an external bar could work well.
 - Configurable multi-monitor layout support, including position and rotation
 - Configurable HiDPI/multi-DPI support
+- Provide information to external status bars via stdout/stdin
 - Various Wayland protocols
-- XWayland support as provided by wlroots
+- XWayland support as provided by wlroots (can be enabled in `config.mk`)
 - Zero flickering - Wayland users naturally expect that "every frame is perfect"
 
 Features under consideration (possibly as patches) are:
 
 - Protocols made trivial by wlroots
-- Communication from the compositor to status bars.  A straightforward possibility would be to use stdout or a provided file descriptor.
+- Implement urgent/focus-request once the xdg-activation protocol [hits wlroots](https://github.com/swaywm/wlroots/pull/2718)
 - Implement the input-inhibitor protocol to support screen lockers
 - Implement the idle-inhibit protocol which lets applications such as mpv disable idle monitoring
 - Layer shell popups (used by Waybar)
 - Basic yes/no damage tracking to avoid needless redraws
 - More in-depth damage region tracking ([which may improve power usage](https://mozillagfx.wordpress.com/2019/10/22/dramatically-reduced-power-usage-in-firefox-70-on-macos-with-core-animation/))
 - Implement the text-input and input-method protocols to support IME once ibus implements input-method v2 (see https://github.com/ibus/ibus/pull/2256 and https://github.com/djpohly/dwl/pull/12)
-- Implement urgent/attention/focus-request once it's part of the xdg-shell protocol (https://gitlab.freedesktop.org/wayland/wayland-protocols/-/merge_requests/9)
 
-Feature *non-goals* include:
+Feature *non-goals* for the main codebase include:
 
 - Client-side decoration (any more than is necessary to tell the clients not to)
 - Client-initiated window management, such as move, resize, and close, which can be done through the compositor
+- Animations and visual effects
 
 ## Building dwl
 
-dwl has only two dependencies: wlroots-git and wayland-protocols. Simply install these and run `make`.
+dwl has only two dependencies: wlroots and wayland-protocols. Simply install these (and their `-devel` versions if your distro has separate development packages) and run `make`.  If you wish to build against a Git version of wlroots, check out the [wlroots-next branch](https://github.com/djpohly/dwl/tree/wlroots-next).
 
 To enable XWayland, you should also install xorg-xwayland and uncomment its flag in `config.mk`.
 
