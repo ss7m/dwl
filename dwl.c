@@ -1545,9 +1545,9 @@ printstatus(void)
 			sel = 0;
 		}
 
-		printf("%s selmon %u\n", m->wlr_output->name, m == selmon);
-		printf("%s tags %u %u\n", m->wlr_output->name, activetags, m->tagset[m->seltags]);
-		printf("%s layout %s\n", m->wlr_output->name, layouts[m->sellt].symbol);
+		//printf("%s selmon %u\n", m->wlr_output->name, m == selmon);
+		//printf("%s tags %u %u\n", m->wlr_output->name, activetags, m->tagset[m->seltags]);
+		//printf("%s layout %s\n", m->wlr_output->name, layouts[m->sellt].symbol);
 		//printf("%s tags %u %u %u %u\n", m->wlr_output->name, occ, m->tagset[m->seltags],
 		//		sel, urg);
 		//printf("%s layout %s\n", m->wlr_output->name, m->lt[m->sellt]->symbol);
