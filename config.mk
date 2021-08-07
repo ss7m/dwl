@@ -1,10 +1,10 @@
 # paths
-PREFIX = /usr/local
+PREFIX = $(HOME)/.local
 
 # Default compile flags (overridable by environment)
 CFLAGS ?= -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wdeclaration-after-statement
 
-CFLAGS += -Os -s -flto -march=native -mtune=native
+CFLAGS += -O2 -s -flto -march=native -mtune=native
 #CFLAGS += -Og -g -DDEBUG
 
 CFLAGS += -DHOME_DIR=\"$(HOME)\"
